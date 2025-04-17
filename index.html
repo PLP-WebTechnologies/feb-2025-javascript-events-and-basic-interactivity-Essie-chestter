@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Form</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: calc(100% - 12px);
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #message {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .highlight {
+            background-color: yellow;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tell Us Something!</h1>
+
+    <form id="infoForm">
+        <div class="form-group">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" name="name">
+            <div class="error-message" id="nameError"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Your Email:</label>
+            <input type="email" id="email" name="email">
+            <div class="error-message" id="emailError"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="messageText">Your Message:</label>
+            <textarea id="messageText" name="messageText" rows="5"></textarea>
+            <div class="error-message" id="messageError"></div>
+        </div>
+
+        <button type="submit">Submit Information</button>
+    </form>
+
+    <div id="message" style="display: none;">
+        <h2>Thank You!</h2>
+        <p>You submitted the following information:</p>
+        <p><span class="highlight" id="submittedName"></span></p>
+        <p><span class="highlight" id="submittedEmail"></span></p>
+        <p><span class="highlight" id="submittedMessage"></span></p>
+    </div>
+
+    <script>
+        const form = document.getElementById('infoForm');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const messageInput = document.getElementById('messageText');
+        const nameError = document.getElementById('nameError');
+        const emailError = document.getElementById('emailError');
+        const messageError = document.getElementById('messageError');
+        const messageDiv = document.getElementById('message');
+        const submittedName = document.getElementById('submittedName');
+        const submittedEmail = document.getElementById('submittedEmail');
+        const submittedMessage = document.getElementById('submittedMessage');
+
+        // Event listener for real-time name validation
+        nameInput.addEventListener('input', () => {
+            if (nameInput.value.trim() === '') {
+                nameError.textContent = 'Please enter your name.';
+            } else {
+                nameError.textContent = '';
+            }
+        });
+
+        // Event listener for real-time email validation
+        emailInput.addEventListener('input', () => {
+            if (emailInput.value.trim() === '') {
+                emailError.textContent = 'Please enter your email.';
+            } else if (!isValidEmail(emailInput.value.trim())) {
+                emailError.textContent = 'Please enter a valid email address.';
+            } else {
+                emailError.textContent = '';
+            }
+        });
+
+        // Event listener for real-time message validation
+        messageInput.addEventListener('input', () => {
+            if (messageInput.value.trim() === '') {
+                messageError.textContent = 'Please enter your message.';
+            } else {
+                messageError.textContent = '';
+            }
+        });
+
+        // Event listener for form submission
+        form.addEventListener('submit', (event) => {
+            event.preventDefault(); // Prevent the default form submission
+
+            let isValid = true;
+
+            // Final validation checks on submit
+            if (nameInput.value.trim() === '') {
+                nameError.textContent = 'Please enter your name.';
+                isValid = false;
+            }
+            if (emailInput.value.trim() === '') {
+                emailError.textContent = 'Please enter your email.';
+                isValid = false;
+            } else if (!isValidEmail(emailInput.value.trim())) {
+                emailError.textContent = 'Please enter a valid email address.';
+                isValid = false;
+            }
+            if (messageInput.value.trim() === '') {
+                messageError.textContent = 'Please enter your message.';
+                isValid = false;
+            }
+
+            if (isValid) {
+                // Display the submitted information
+                submittedName.textContent = `Name: ${nameInput.value.trim()}`;
+                submittedEmail.textContent = `Email: ${emailInput.value.trim()}`;
+                submittedMessage.textContent = `Message: ${messageInput.value.trim()}`;
+                messageDiv.style.display = 'block';
+
+                // Optionally, you could send the data to a server here
+                console.log('Form submitted successfully!', {
+                    name: nameInput.value.trim(),
+                    email: emailInput.value.trim(),
+                    message: messageInput.value.trim()
+                });
+
+                // Reset the form (optional)
+                form.reset();
+                // Clear error messages after successful submission
+                nameError.textContent = '';
+                emailError.textContent = '';
+                messageError.textContent = '';
+            }
+        });
+
+        // Helper function for email validation
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+    </script>
+
+</body>
+</html>
